@@ -1,5 +1,4 @@
-# raspberry-pi-e-paper-display
-Raspberry Pi Zero W with a 5 inch ePaper Display
+# Raspberry Pi (Zero W): 7.5 inch ePaper Display
 
 ## Python Addons
 ```
