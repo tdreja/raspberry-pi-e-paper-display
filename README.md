@@ -30,3 +30,7 @@ cd bcm2835-1.60/
 sudo ./configure
 sudo make && sudo make check && sudo make install
 ```
+
+### Activate SPI
+
+Make sure that SPI is active in interfaces in `sudo raspi-config`.
