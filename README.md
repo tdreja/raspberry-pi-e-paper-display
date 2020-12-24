@@ -30,6 +30,13 @@ sudo ./configure
 sudo make && sudo make check && sudo make install
 ```
 
+### Other Libraries
+
+```
+sudo apt-get install libopenjp2-7
+sudo apt-get install libtiff5
+```
+
 ### Activate SPI
 
 Make sure that SPI is active in interfaces in `sudo raspi-config`.
