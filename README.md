@@ -34,3 +34,11 @@ sudo make && sudo make check && sudo make install
 ### Activate SPI
 
 Make sure that SPI is active in interfaces in `sudo raspi-config`.
+
+## Links
+
+https://www.waveshare.com/wiki/Pioneer600#Libraries_Installation_for_RPi
+
+https://www.waveshare.com/wiki/E-Paper_Driver_HAT
+
+https://www.waveshare.com/7.5inch-e-paper.htm
