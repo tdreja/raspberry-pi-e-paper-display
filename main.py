@@ -1,7 +1,7 @@
 import time
 import traceback
 
-from PIL import Image, ImageDraw, ImageFont
+from PIL import Image
 
 import epd7in5
 
