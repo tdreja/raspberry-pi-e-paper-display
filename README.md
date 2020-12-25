@@ -48,3 +48,10 @@ https://www.waveshare.com/wiki/Pioneer600#Libraries_Installation_for_RPi
 https://www.waveshare.com/wiki/E-Paper_Driver_HAT
 
 https://www.waveshare.com/7.5inch-e-paper.htm
+
+## Image Size
+
+Height: 384px
+Width: 640px
+
+Block size: 16px
