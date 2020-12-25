@@ -39,8 +39,8 @@ span.dateblock {
     text-align: center;
     grid-area: span 5 / span 5;
     border-bottom: 1px solid black;
-    margin-left: 8px;
-    margin-right: 8px;
+    margin-left: 6px;
+    margin-right: 6px;
     display: inline-flex;
     justify-content: center;
     align-items: flex-end;
@@ -59,6 +59,7 @@ span.dateblock.head {
     font-family: "Roboto";
     font-size: 12px;
     padding-bottom: 0 !important;
+    border-bottom: none;
 }
 
 span.dateblock.none {
