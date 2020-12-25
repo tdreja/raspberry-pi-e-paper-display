@@ -23,9 +23,15 @@ body {
     grid-auto-flow: row;
 }
 
-.four-rows {
-    grid-template-rows: repeat(4, 8px) !important;
-    flex-grow: 0;
+.calendar-separator {
+    background: black;
+    color: white;
+    max-height: 48px;
+    margin: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
 }
 
 span.header-text {
@@ -37,14 +43,17 @@ span.header-text {
 }
 
 span.today {
+    font-size: 24px;
 }
 
 span.time {
+    font-size: 24px;
 }
 
 span.month-year {
     font-size: 24px;
     font-weight: 800;
+    grid-area: span 4 / span 46;
 
 }
 
@@ -53,20 +62,18 @@ span.spacer {
 }
 
 .grid-calendar {
-    flex-grow: 1;
-    margin-bottom: 8px;
-    margin-left: 32px;
-    margin-right: 32px;
+    flex-grow: 2;
     display: grid;
     background: white;
     grid-template-columns: repeat(auto-fill, 8px);
     grid-template-rows: repeat(auto-fill, 8px);
     grid-auto-flow: row;
+    margin-bottom: 8px;
 }
 
 span.dateblock {
     text-align: center;
-    grid-area: span 5 / span 5;
+    grid-area: span 6 / span 6;
     border-bottom: 1px solid black;
     margin-left: 6px;
     margin-right: 6px;
@@ -74,7 +81,7 @@ span.dateblock {
     justify-content: center;
     align-items: flex-end;
     font-family: "Roboto Medium";
-    font-size: 16px;
+    font-size: 20px;
 }
 
 span.dateblock.weekend {
@@ -84,9 +91,9 @@ span.dateblock.weekend {
 
 
 span.dateblock.head {
-    grid-area: span 4 / span 5;
+    grid-area: span 4 / span 6;
     font-family: "Roboto";
-    font-size: 12px;
+    font-size: 14px;
     padding-bottom: 0 !important;
     border-bottom: none;
 }
@@ -98,6 +105,6 @@ span.dateblock.none {
 span.dateblock.weeknr {
     font-family: "Roboto";
     border: none;
-    font-size: 12px;
+    font-size: 14px;
     padding-bottom: 4px;
 }
