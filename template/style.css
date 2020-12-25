@@ -103,6 +103,15 @@ span.dateblock.head {
     align-items: center;
 }
 
+span.dateblock.today {
+    background: black;
+    color: white;
+    margin-left: 4px;
+    margin-right: 4px;
+    margin-top: 8px;
+    border-radius: 4px;
+}
+
 span.dateblock.none {
     border-bottom: none;
 }
