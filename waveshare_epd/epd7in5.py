@@ -64,11 +64,18 @@ class EPD:
         epdconfig.digital_write(self.cs_pin, 0)
         epdconfig.spi_writebyte([data])
         epdconfig.digital_write(self.cs_pin, 1)
-        
+
     def ReadBusy(self):
         logging.debug("e-Paper busy")
-        while(epdconfig.digital_read(self.busy_pin) == 0):      # 0: idle, 1: busy
-            epdconfig.delay_ms(100)    
+        self.send_command(0x71);
+        iter = 0;
+        while (epdconfig.digital_read(self.busy_pin) == 0):
+            self.send_command(0x71);
+            epdconfig.delay_ms(100)
+            iter += 1
+            if iter > 150:
+                logging.debug("Forced e-Paper busy release")
+                break
         logging.debug("e-Paper busy release")
         
     def init(self):
