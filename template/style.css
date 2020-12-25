@@ -52,7 +52,7 @@ span.time {
 
 span.month-year {
     font-size: 24px;
-    font-weight: 800;
+    font-family: "Roboto Black";
     grid-area: span 4 / span 46;
 
 }
@@ -74,7 +74,6 @@ span.spacer {
 span.dateblock {
     text-align: center;
     grid-area: span 6 / span 6;
-    border-bottom: 1px solid black;
     margin-left: 6px;
     margin-right: 6px;
     display: inline-flex;
@@ -82,11 +81,13 @@ span.dateblock {
     align-items: flex-end;
     font-family: "Roboto Medium";
     font-size: 20px;
+    /*border-bottom: 1px dotted black;*/
 }
 
 span.dateblock.weekend {
-    font-weight: 800;
+    font-family: "Roboto Black";
     -webkit-font-smoothing: none;
+    /*border-bottom: 1px solid black;*/
 }
 
 

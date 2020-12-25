@@ -17,7 +17,7 @@ try:
     #epd.Clear()
     
     logging.info("3.read bmp file")
-    Himage = Image.open('test.bmp')
+    Himage = Image.open('test.png')
     epd.display(epd.getbuffer(Himage))
     time.sleep(2)
     
