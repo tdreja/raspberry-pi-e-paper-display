@@ -14,7 +14,7 @@ body {
 }
 
 .grid-header {
-    flex-grow: 1;
+    flex-grow: 2;
     margin: 8px;
     display: grid;
     background: white;
@@ -73,30 +73,34 @@ span.spacer {
 
 span.dateblock {
     text-align: center;
-    grid-area: span 6 / span 6;
+    grid-area: span 5 / span 6;
     margin-left: 6px;
     margin-right: 6px;
     display: inline-flex;
     justify-content: center;
     align-items: flex-end;
     font-family: "Roboto Medium";
-    font-size: 20px;
+    font-size: 22px;
     /*border-bottom: 1px dotted black;*/
 }
 
 span.dateblock.weekend {
     font-family: "Roboto Black";
     -webkit-font-smoothing: none;
-    /*border-bottom: 1px solid black;*/
+    border-bottom: 1px dotted black;
 }
 
 
 span.dateblock.head {
     grid-area: span 4 / span 6;
     font-family: "Roboto";
-    font-size: 14px;
+    font-size: 16px;
     padding-bottom: 0 !important;
     border-bottom: none;
+    background: black;
+    color: white;
+    margin: 0;
+    align-items: center;
 }
 
 span.dateblock.none {
@@ -108,4 +112,11 @@ span.dateblock.weeknr {
     border: none;
     font-size: 14px;
     padding-bottom: 4px;
+}
+
+span.dateblock.othermonth {
+    font-family: "Roboto";
+    border: none;
+    font-size: 12px;
+    padding-bottom: 6px;
 }
