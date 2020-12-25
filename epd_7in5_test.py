@@ -1,17 +1,10 @@
 #!/usr/bin/python
 # -*- coding:utf-8 -*-
-import sys
-import os
-picdir = os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))), 'pic')
-libdir = os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))), 'lib')
-if os.path.exists(libdir):
-    sys.path.append(libdir)
 
 import logging
 from waveshare_epd import epd7in5
 import time
 from PIL import Image,ImageDraw,ImageFont
-import traceback
 
 logging.basicConfig(level=logging.DEBUG)
 
@@ -24,7 +17,7 @@ try:
     #epd.Clear()
     
     logging.info("3.read bmp file")
-    Himage = Image.open(os.path.join(picdir, '7in5.bmp'))
+    Himage = Image.open('7in5.bmp')
     epd.display(epd.getbuffer(Himage))
     time.sleep(2)
     
