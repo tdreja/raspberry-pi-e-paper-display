@@ -12,7 +12,7 @@ try:
     epd.Clear(0xFF)
 
     print("read bmp file")
-    Himage = Image.open('7in5.bmp')
+    Himage = Image.open('test.bmp')
     epd.display(epd.getbuffer(Himage))
     time.sleep(2)
 
