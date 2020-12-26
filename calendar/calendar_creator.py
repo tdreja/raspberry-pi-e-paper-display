@@ -53,12 +53,20 @@ def create_calendar():
         print(str.format("Week {}", weekdays))
 
 
-def draw_calendar(draw, start_coords, image_width, today=date.today()):
+def draw_calendar(draw, start_xy, image_width, today=date.today()):
+    """
+    Draws the entire calendar below the coordinates
+    :param draw: Image Draw
+    :param start_xy: Coordinates
+    :param image_width: Width of the image
+    :param today: the current date
+    :return: nothing
+    """
     month = today.month
     year = today.year
     text_calendar = calendar.TextCalendar(calendar.MONDAY)
 
-    xy = start_coords
+    xy = start_xy
     draw_header(draw, xy, image_width, text_calendar, text_calendar.formatmonthname(year, month, 20))
 
     xy = (xy[0], xy[1] + header_height)
@@ -66,6 +74,15 @@ def draw_calendar(draw, start_coords, image_width, today=date.today()):
 
 
 def draw_header(draw, start_xy, image_width, text_calendar, headline):
+    """
+    Draws the calendar header with month and year and below the headlines for the table
+    :param draw: Image Draw
+    :param start_xy: Coordinates
+    :param image_width: Width of the image
+    :param text_calendar: Text calendar for printing the weekdays
+    :param headline: headline of calendar (month + year)
+    :return: nothing
+    """
     draw.rectangle((start_xy[0], start_xy[1],
                     start_xy[0] + image_width + 1, start_xy[1] + header_height + 1),
                    fill=color_black, outline=None, width=0)
