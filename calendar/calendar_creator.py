@@ -152,6 +152,8 @@ def test_calendar(width, height, today=date.today()):
 
     draw_calendar(draw, (0, 0), width, today)
 
+    #image = image.rotate(angle=90, expand=1)
+
     # write to stdout
     image.show()
 
