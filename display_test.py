@@ -16,11 +16,11 @@ from waveshare_epd import epd7in5
 locale.setlocale(category=locale.LC_ALL, locale='de_DE.UTF-8')
 logging.basicConfig(level=logging.DEBUG)
 
+epd = epd7in5.EPD()
+
 def print_to_epaper():
     try:
-        logging.info("drawing new calendar")
-
-        epd = epd7in5.EPD()
+        logging.info("{time}: drawing new calendar".format(time=datetime.now()))
         logging.info("init and Clear")
         epd.init()
         # epd.Clear()
@@ -38,14 +38,12 @@ def print_to_epaper():
         epd.sleep()
         time.sleep(3)
 
-        epd.Dev_exit()
-
     except IOError as e:
         logging.info(e)
 
     except KeyboardInterrupt:
         logging.info("Exit while printing")
-        epd7in5.epdconfig.module_exit()
+        epd.Dev_exit()
         exit()
 
 
@@ -61,4 +59,5 @@ while True:
         time.sleep(10)
     except KeyboardInterrupt:
         logging.info("Exit while waiting")
+        epd.Dev_exit()
         exit()
