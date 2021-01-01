@@ -1,9 +1,6 @@
 import locale
-import logging
-import time
 from datetime import datetime
 
-import schedule
 from PIL import Image, ImageDraw
 
 from drawcalendar.drawcalendar import draw_calendar
@@ -12,12 +9,7 @@ from drawtoday.drawtoday import draw_today, full_height
 locale.setlocale(category=locale.LC_ALL, locale='de_DE.UTF-8')
 
 
-def do_schedule():
-    full_test(384, 640)
-
-
-def full_test(width, height, today=datetime.now()):
-    print('draw calendar')
+def full_test(width, height, today=datetime.now().replace(month=5, day=24)):
     image = Image.new('1', (width, height), 255)
     draw = ImageDraw.Draw(image)
 
@@ -30,12 +22,4 @@ def full_test(width, height, today=datetime.now()):
     image.show()
 
 
-schedule.every(5).seconds.do(do_schedule)
-
-while True:
-    try:
-        schedule.run_pending()
-        time.sleep(10)
-    except KeyboardInterrupt:
-        logging.info("ctrl + c:")
-        exit()
+full_test(384, 640)
