@@ -6,7 +6,7 @@ from font import fonts
 from util.dateloader import load_event_names, load_holiday_names
 from util.drawtext import draw_text_centered
 
-locale.setlocale(category=locale.LC_ALL, locale="German")
+locale.setlocale(category=locale.LC_ALL, locale='de_DE.utf8')
 
 headline_height = 48
 text_block_height = 28
