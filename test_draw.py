@@ -1,9 +1,12 @@
+import locale
 from datetime import datetime
 
 from PIL import Image, ImageDraw
 
 from drawcalendar.drawcalendar import draw_calendar
 from drawtoday.drawtoday import draw_today, full_height
+
+locale.setlocale(category=locale.LC_ALL, locale='de_DE.UTF-8')
 
 
 def full_test(width, height, today=datetime.now()):

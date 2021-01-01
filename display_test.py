@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # -*- coding:utf-8 -*-
-
+import locale
 import logging
 import time
 from datetime import datetime
@@ -11,6 +11,8 @@ from drawcalendar.drawcalendar import draw_calendar
 from drawtoday.drawtoday import draw_today, full_height
 from waveshare_epd import epd7in5
 
+
+locale.setlocale(category=locale.LC_ALL, locale='de_DE.UTF-8')
 logging.basicConfig(level=logging.DEBUG)
 
 try:

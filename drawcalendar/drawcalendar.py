@@ -1,12 +1,9 @@
 import calendar
-import locale
 from datetime import date
 
 from font import fonts
 from util.dateloader import load_holidays
 from util.drawtext import draw_text_centered
-
-locale.setlocale(category=locale.LC_ALL, locale='de_DE.utf8')
 
 header_height = 80
 headline_height = 48
