@@ -9,7 +9,7 @@ headline_height = 48
 text_block_height = 28
 block_offset = 8
 
-full_height = headline_height + (6 * text_block_height) + (6 * block_offset)
+full_height = headline_height + (6 * text_block_height) + (7 * block_offset)
 
 
 def draw_date(draw, content_xy, block_size, now=datetime.now()):
