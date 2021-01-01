@@ -1,2 +1,2 @@
-#!/usr/bin/env python3
+#!/bin/sh
 python3 display_test.py
