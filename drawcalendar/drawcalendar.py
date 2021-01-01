@@ -10,10 +10,10 @@ locale.setlocale(category=locale.LC_ALL, locale="German")
 color_white = 255
 color_black = 0
 
-roboto16 = ImageFont.truetype('./Roboto-Bold.ttf', 16)
-roboto12 = ImageFont.truetype('./Roboto-Regular.ttf', 12)
-roboto14 = ImageFont.truetype('./Roboto-Medium.ttf', 14)
-roboto24 = ImageFont.truetype('./Roboto-Bold.ttf', 24)
+roboto16 = ImageFont.truetype('../fonts/Roboto-Bold.ttf', 16)
+roboto12 = ImageFont.truetype('../fonts/Roboto-Regular.ttf', 12)
+roboto14 = ImageFont.truetype('../fonts/Roboto-Medium.ttf', 14)
+roboto24 = ImageFont.truetype('../fonts/Roboto-Bold.ttf', 24)
 
 header_height = 80
 headline_height = 48
@@ -26,7 +26,7 @@ row_full = 48
 
 def draw_calendar(draw, start_xy, image_width, today=date.today()):
     """
-    Draws the entire drawcalendar below the coordinates
+    Draws the entire drawcalendar2 below the coordinates
     :param draw: Image Draw
     :param start_xy: Coordinates
     :param image_width: Width of the image
@@ -48,12 +48,12 @@ def draw_calendar(draw, start_xy, image_width, today=date.today()):
 
 def draw_header(draw, start_xy, image_width, text_calendar, headline):
     """
-    Draws the drawcalendar header with month and year and below the headlines for the table
+    Draws the drawcalendar2 header with month and year and below the headlines for the table
     :param draw: Image Draw
     :param start_xy: Coordinates
     :param image_width: Width of the image
-    :param text_calendar: Text drawcalendar for printing the weekdays
-    :param headline: headline of drawcalendar (month + year)
+    :param text_calendar: Text drawcalendar2 for printing the weekdays
+    :param headline: headline of drawcalendar2 (month + year)
     :return: nothing
     """
     draw.rectangle((start_xy[0], start_xy[1],

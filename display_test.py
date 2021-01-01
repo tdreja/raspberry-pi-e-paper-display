@@ -6,7 +6,7 @@ import logging
 from drawcalendar import drawcalendar
 from waveshare_epd import epd7in5
 import time
-from PIL import Image,ImageDraw,ImageFont
+from PIL import Image,ImageDraw
 
 logging.basicConfig(level=logging.DEBUG)
 
@@ -23,7 +23,7 @@ try:
     epd.display(epd.getbuffer(Himage))
     time.sleep(2)
 
-    logging.info("create drawcalendar")
+    logging.info("create drawcalendar2")
     image = Image.new('1', (epd.height, epd.width), 255)  # 255: clear the frame
     draw = ImageDraw.Draw(image)
     drawcalendar.draw_calendar(draw, (0, 0), epd.height)
