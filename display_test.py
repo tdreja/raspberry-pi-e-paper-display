@@ -18,17 +18,17 @@ logging.basicConfig(level=logging.DEBUG)
 
 def print_to_epaper():
     try:
-        logging.info("epd7in5 Demo")
+        logging.info("drawing new calendar")
 
         epd = epd7in5.EPD()
         logging.info("init and Clear")
         epd.init()
         # epd.Clear()
 
-        logging.info("create calendar")
+        logging.info("create new calendar")
         image = Image.new('1', (epd.height, epd.width), 255)  # 255: clear the frame
         draw = ImageDraw.Draw(image)
-        today = datetime.now().replace(month=5, day=24)
+        today = datetime.now()
         draw_today(draw, (0, 0), epd.height, today)
         draw_calendar(draw, (0, full_height), epd.height, today.date())
         epd.display(epd.getbuffer(image.rotate(angle=90, expand=1)))
@@ -44,9 +44,17 @@ def print_to_epaper():
         logging.info(e)
 
 
-schedule.every(5).minutes.do(print_to_epaper)
-print_to_epaper()
+schedule.every(1).minutes.do(print_to_epaper)
 
+# First run
+try:
+    print_to_epaper()
+except KeyboardInterrupt:
+    logging.info("ctrl + c:")
+    epd7in5.epdconfig.module_exit()
+    exit()
+
+# Scheduled runs
 while True:
     try:
         schedule.run_pending()
