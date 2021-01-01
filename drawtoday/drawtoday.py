@@ -40,36 +40,35 @@ def calculate_day_time(now=datetime.now()):
     return 'Abends,'
 
 
-def calculate_time_prefix(now=datetime.now()):
+def calculate_time(now=datetime.now()):
     if now.minute < 3:
-        return 'Punkt'
+        return 'Punkt {uhr}'.format(uhr=calculate_hour_name(now.hour))
     if now.minute < 8:
-        return 'Fünf nach'
+        return 'Fünf nach {uhr}'.format(uhr=calculate_hour_name(now.hour))
     if now.minute < 13:
-        return 'Zehn nach'
+        return 'Zehn nach {uhr}'.format(uhr=calculate_hour_name(now.hour))
     if now.minute < 18:
-        return 'Viertal nach'
+        return 'Viertal nach {uhr}'.format(uhr=calculate_hour_name(now.hour))
     if now.minute < 23:
-        return 'Zehn vor halb'
+        return 'Zehn vor halb {uhr}'.format(uhr=calculate_hour_name(now.hour+1))
     if now.minute < 28:
-        return 'Fünf vor halb'
+        return 'Fünf vor halb {uhr}'.format(uhr=calculate_hour_name(now.hour+1))
     if now.minute < 33:
-        return 'halb'
+        return 'halb {uhr}'.format(uhr=calculate_hour_name(now.hour+1))
     if now.minute < 38:
-        return 'Fünf nach halb'
+        return 'Fünf nach halb {uhr}'.format(uhr=calculate_hour_name(now.hour+1))
     if now.minute < 43:
-        return 'Zehn nach halb'
+        return 'Zehn nach halb {uhr}'.format(uhr=calculate_hour_name(now.hour+1))
     if now.minute < 48:
-        return 'Dreiviertel'
+        return 'Dreiviertel {uhr}'.format(uhr=calculate_hour_name(now.hour+1))
     if now.minute < 53:
-        return 'Zehn vor'
+        return 'Zehn vor {uhr}'.format(uhr=calculate_hour_name(now.hour+1))
     if now.minute < 58:
-        return 'Fünf vor'
-    return 'Punkt'
+        return 'Fünf vor {uhr}'.format(uhr=calculate_hour_name(now.hour+1))
+    return 'Punkt {uhr}'.format(uhr=calculate_hour_name(now.hour+1))
 
 
-def calculate_hour_name(now=datetime.now()):
-    hour = now.hour
+def calculate_hour_name(hour=0):
     if hour > 12:
         hour = hour - 12
 
@@ -96,10 +95,6 @@ def calculate_hour_name(now=datetime.now()):
     if hour == 11:
         return 'Elf'
     return 'Zwölf'
-
-
-def calculate_time(now=datetime.now()):
-    return '{prefix} {hour}'.format(prefix=calculate_time_prefix(now), hour=calculate_hour_name(now))
 
 
 def draw_time(draw, content_xy, block_size, now=datetime.now()):

@@ -26,7 +26,7 @@ try:
     logging.info("create calendar")
     image = Image.new('1', (epd.height, epd.width), 255)  # 255: clear the frame
     draw = ImageDraw.Draw(image)
-    today = datetime.now().replace(month=5, day=24)
+    today = datetime.now()
     draw_today(draw, (0, 0), epd.height, today)
     draw_calendar(draw, (0, full_height), epd.height, today.date())
     epd.display(epd.getbuffer(image.rotate(angle=90, expand=1)))
