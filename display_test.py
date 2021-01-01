@@ -23,11 +23,6 @@ try:
     epd.init()
     # epd.Clear()
 
-    logging.info("read png file")
-    Himage = Image.open('test.png')
-    epd.display(epd.getbuffer(Himage))
-    time.sleep(2)
-
     logging.info("create calendar")
     image = Image.new('1', (epd.height, epd.width), 255)  # 255: clear the frame
     draw = ImageDraw.Draw(image)
