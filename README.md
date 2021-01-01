@@ -55,3 +55,10 @@ Height: 384px
 Width: 640px
 
 Block size: 16px
+
+## Cronjob
+
+Call Script every 5 Minutes
+```
+*/5 * * * * cd /home/pi/raspberry-pi-e-paper-display/ && python3 display_test.py >> /home/pi/python.log 2>&1
+```
