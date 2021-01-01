@@ -43,16 +43,16 @@ def print_to_epaper():
     except IOError as e:
         logging.info(e)
 
+    except KeyboardInterrupt:
+        logging.info("Exit while printing")
+        epd7in5.epdconfig.module_exit()
+        exit()
+
 
 schedule.every(1).minutes.do(print_to_epaper)
 
 # First run
-try:
-    print_to_epaper()
-except KeyboardInterrupt:
-    logging.info("ctrl + c:")
-    epd7in5.epdconfig.module_exit()
-    exit()
+print_to_epaper()
 
 # Scheduled runs
 while True:
@@ -60,6 +60,5 @@ while True:
         schedule.run_pending()
         time.sleep(10)
     except KeyboardInterrupt:
-        logging.info("ctrl + c:")
-        epd7in5.epdconfig.module_exit()
+        logging.info("Exit while waiting")
         exit()
