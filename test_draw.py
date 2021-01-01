@@ -9,7 +9,7 @@ from drawtoday.drawtoday import draw_today, full_height
 locale.setlocale(category=locale.LC_ALL, locale='de_DE.UTF-8')
 
 
-def full_test(width, height, today=datetime.now()):
+def full_test(width, height, today=datetime.now().replace(month=5, day=24)):
     image = Image.new('1', (width, height), 255)
     draw = ImageDraw.Draw(image)
 
