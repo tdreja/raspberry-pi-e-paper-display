@@ -1,8 +1,9 @@
-import calendar
 import locale
+import calendar
 from datetime import date
 
 from PIL import ImageFont, Image, ImageDraw
+from dateloader import load_holidays
 
 locale.setlocale(category=locale.LC_ALL, locale="German")
 
@@ -22,40 +23,10 @@ col_width = 48
 row_small = 32
 row_full = 48
 
-holidays = [date(2020, 12, 24), date(2020, 12, 25), date(2020, 12, 26)]
-
-
-def create_calendar():
-    today = date(2021, 2, 1)
-    month = today.month
-    year = today.year
-    day = today.day
-    text_calendar = calendar.TextCalendar(calendar.MONDAY)
-
-    day_str = str.format("{}, der {}.{}.{}", calendar.day_name[today.weekday()], day, month, year)
-    print(day_str)
-    print(text_calendar.formatmonthname(year, month, 30))
-
-    for week in text_calendar.monthdatescalendar(year, month):
-        week_nr = week[0].isocalendar()[1]
-        day_numbers = []
-        for day in week:
-            if day.month == month:
-                day_numbers.append(day.day)
-            else:
-                day_numbers.append(0)
-
-        weekdays = str.join(', ', map(str, day_numbers))
-        print(str.format("Week #{} {}", week_nr, weekdays))
-
-    for week in text_calendar.monthdayscalendar(year, month):
-        weekdays = str.join(', ', map(str, week))
-        print(str.format("Week {}", weekdays))
-
 
 def draw_calendar(draw, start_xy, image_width, today=date.today()):
     """
-    Draws the entire calendar below the coordinates
+    Draws the entire drawcalendar below the coordinates
     :param draw: Image Draw
     :param start_xy: Coordinates
     :param image_width: Width of the image
@@ -65,22 +36,24 @@ def draw_calendar(draw, start_xy, image_width, today=date.today()):
     month = today.month
     year = today.year
     text_calendar = calendar.TextCalendar(calendar.MONDAY)
+    # Create a list of all holidays for this month
+    holidays = list(map(lambda entry: entry[0], load_holidays(month, year)))
 
     xy = start_xy
     draw_header(draw, xy, image_width, text_calendar, text_calendar.formatmonthname(year, month, 20))
 
     xy = (xy[0], xy[1] + header_height)
-    draw_rows(draw, xy, month, weeks=text_calendar.monthdatescalendar(year, month), today=today)
+    draw_rows(draw, xy, month, weeks=text_calendar.monthdatescalendar(year, month), holidays=holidays, today=today)
 
 
 def draw_header(draw, start_xy, image_width, text_calendar, headline):
     """
-    Draws the calendar header with month and year and below the headlines for the table
+    Draws the drawcalendar header with month and year and below the headlines for the table
     :param draw: Image Draw
     :param start_xy: Coordinates
     :param image_width: Width of the image
-    :param text_calendar: Text calendar for printing the weekdays
-    :param headline: headline of calendar (month + year)
+    :param text_calendar: Text drawcalendar for printing the weekdays
+    :param headline: headline of drawcalendar (month + year)
     :return: nothing
     """
     draw.rectangle((start_xy[0], start_xy[1],
@@ -101,7 +74,7 @@ def draw_header(draw, start_xy, image_width, text_calendar, headline):
         draw_small_row_text(draw, column_xy, text_calendar.formatweekday(weekDay, 2))
 
 
-def draw_rows(draw, start_xy, month, weeks, today=date.today()):
+def draw_rows(draw, start_xy, month, weeks, holidays, today=date.today()):
     column_xy = start_xy
     for week in weeks:
         week_nr = week[0].isocalendar()[1]
