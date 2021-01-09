@@ -32,11 +32,13 @@ def main():
         print(value[0].isoformat() + ' ' + value[1])
 
 
-def daily_events(today=datetime.date.today()):
-    start_date = today
-    start_time = datetime.datetime.combine(start_date, datetime.time(0, 0, 0))
-    end_date = start_date + datetime.timedelta(1)
-    end_time = datetime.datetime.combine(end_date, datetime.time(0, 0, 0))
+def daily_events(now=datetime.datetime.now()):
+    if not os.path.exists('./credentials.json'):
+        print('No credentials for google. Aborting')
+        return []
+
+    start_time = now.replace(hour=0, minute=0, second=0)
+    end_time = start_time + datetime.timedelta(days=1)
 
     utc_start = datetime.datetime.utcfromtimestamp(start_time.timestamp())
     utc_end = datetime.datetime.utcfromtimestamp(end_time.timestamp())
@@ -57,7 +59,7 @@ def service():
             creds.refresh(Request())
         else:
             flow = InstalledAppFlow.from_client_secrets_file(
-                '../credentials.json', SCOPES)
+                './credentials.json', SCOPES)
             creds = flow.run_local_server(port=0)
         # Save the credentials for the next run
         with open('token.pickle', 'wb') as token:
@@ -85,10 +87,10 @@ def load_calendars():
 
 def find_calendar_names():
     names = []
-    if not os.path.exists('../calendars.csv'):
+    if not os.path.exists('./calendars.csv'):
         return names
 
-    f = open('../calendars.csv', encoding="utf-8")
+    f = open('./calendars.csv', encoding="utf-8")
     for line in f.readlines():
         names.append(line.strip())
     f.close()
@@ -105,16 +107,19 @@ def load_events(calendars, min_time=datetime.datetime.utcnow(), max_time=datetim
             events.extend(events_for_calendar(calendar_id=cal['id'], min_time=min_time, max_time=max_time))
 
     if not events:
+        print('No events found from google')
         return results
     for event in events:
         start = event['start'].get('dateTime', event['start'].get('date'))
         start_time = datetime.datetime.fromisoformat(start)
+        print('Event '+event['summary'])
         results.append((start_time, event['summary']))
 
     return results
 
 
 def events_for_calendar(calendar_id, min_time=datetime.datetime.utcnow(), max_time=datetime.datetime.utcnow()):
+    print('Loading calendar '+calendar_id)
     events_result = service().events().list(calendarId=calendar_id,
                                             timeMin=min_time.isoformat() + 'Z',
                                             timeMax=max_time.isoformat() + 'Z',

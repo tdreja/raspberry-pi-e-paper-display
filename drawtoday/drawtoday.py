@@ -1,9 +1,11 @@
 import calendar
+import os
 from datetime import datetime
 
 from font import fonts
 from util.dateloader import load_event_names, load_holiday_names
 from util.drawtext import draw_text_centered
+from google_integration import google_loader
 
 headline_height = 48
 text_block_height = 28
@@ -50,22 +52,22 @@ def calculate_time(now=datetime.now()):
     if now.minute < 18:
         return 'Viertal nach {uhr}'.format(uhr=calculate_hour_name(now.hour))
     if now.minute < 23:
-        return 'Zehn vor halb {uhr}'.format(uhr=calculate_hour_name(now.hour+1))
+        return 'Zehn vor halb {uhr}'.format(uhr=calculate_hour_name(now.hour + 1))
     if now.minute < 28:
-        return 'Fünf vor halb {uhr}'.format(uhr=calculate_hour_name(now.hour+1))
+        return 'Fünf vor halb {uhr}'.format(uhr=calculate_hour_name(now.hour + 1))
     if now.minute < 33:
-        return 'halb {uhr}'.format(uhr=calculate_hour_name(now.hour+1))
+        return 'halb {uhr}'.format(uhr=calculate_hour_name(now.hour + 1))
     if now.minute < 38:
-        return 'Fünf nach halb {uhr}'.format(uhr=calculate_hour_name(now.hour+1))
+        return 'Fünf nach halb {uhr}'.format(uhr=calculate_hour_name(now.hour + 1))
     if now.minute < 43:
-        return 'Zehn nach halb {uhr}'.format(uhr=calculate_hour_name(now.hour+1))
+        return 'Zehn nach halb {uhr}'.format(uhr=calculate_hour_name(now.hour + 1))
     if now.minute < 48:
-        return 'Dreiviertel {uhr}'.format(uhr=calculate_hour_name(now.hour+1))
+        return 'Dreiviertel {uhr}'.format(uhr=calculate_hour_name(now.hour + 1))
     if now.minute < 53:
-        return 'Zehn vor {uhr}'.format(uhr=calculate_hour_name(now.hour+1))
+        return 'Zehn vor {uhr}'.format(uhr=calculate_hour_name(now.hour + 1))
     if now.minute < 58:
-        return 'Fünf vor {uhr}'.format(uhr=calculate_hour_name(now.hour+1))
-    return 'Punkt {uhr}'.format(uhr=calculate_hour_name(now.hour+1))
+        return 'Fünf vor {uhr}'.format(uhr=calculate_hour_name(now.hour + 1))
+    return 'Punkt {uhr}'.format(uhr=calculate_hour_name(now.hour + 1))
 
 
 def calculate_hour_name(hour=0):
@@ -106,19 +108,29 @@ def draw_time(draw, content_xy, block_size, now=datetime.now()):
     draw_text_centered(draw, next_xy, time, font=fonts.roboto22, color=fonts.color_black, size=block_size)
 
 
+def draw_local_events(draw, content_xy, block_size, now=datetime.now()):
+    event_texts = load_event_names(now.date())
+    text = 'Heute gibt es keine Termine'
+    if event_texts:
+        text = 'Termine: ' + ', '.join(event_texts)
+
+    draw_text_centered(draw, content_xy, text, font=fonts.roboto16, color=fonts.color_black, size=block_size)
+
+
 def draw_events(draw, content_xy, block_size, now=datetime.now()):
     next_xy = content_xy
     holiday_texts = load_holiday_names(now.date())
-    if len(holiday_texts) > 0:
+    if holiday_texts:
         draw_text_centered(draw, next_xy, ', '.join(holiday_texts), font=fonts.roboto16,
                            color=fonts.color_black, size=block_size)
         next_xy = (content_xy[0], content_xy[1] + block_size[1])
 
-    event_texts = load_event_names(now.date())
-    text = 'Heute gibt es keine Termine'
-    if len(event_texts) > 0:
-        text = 'Termine: ' + ', '.join(event_texts)
+    google_events = google_loader.daily_events(now)
+    if not google_events:
+        draw_local_events(draw, next_xy, block_size, now)
+        return
 
+    text = 'Termine: ' + ', '.join(list(map(lambda entry: entry[1], google_events)))
     draw_text_centered(draw, next_xy, text, font=fonts.roboto16, color=fonts.color_black, size=block_size)
 
 
