@@ -204,3 +204,6 @@ fabric.properties
 
 # Google Credentials
 credentials.json
+*/credentials.json
+token.pickle
+*/token.pickle
