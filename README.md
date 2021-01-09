@@ -37,6 +37,11 @@ sudo apt-get install libopenjp2-7
 sudo apt-get install libtiff5
 ```
 
+### Google API
+```
+pip install --upgrade google-api-python-client google-auth-httplib2 google-auth-oauthlib
+```
+
 ### Activate SPI
 
 Make sure that SPI is active in interfaces in `sudo raspi-config`.
