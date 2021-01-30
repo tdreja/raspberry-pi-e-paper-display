@@ -77,7 +77,7 @@ def service():
         with open(token_pickle, 'wb') as token:
             pickle.dump(creds, token)
 
-    return build('calendar', 'v3', credentials=creds)
+    return build('calendar', 'v3', credentials=creds, cache_discovery=False)
 
 
 def load_calendars(file=''):
