@@ -75,3 +75,21 @@ class CalendarInfo:
 
     def list_events(self, now=datetime.now()):
         return list(map(lambda entry: entry.display(), filter_events_for_time(self.events, now)))
+
+    def is_holiday(self, day=datetime.today()):
+        for holiday in self.holidays:
+            if holiday.is_at_day(day):
+                return True
+        return False
+
+    def is_whole_day_event(self, day=datetime.today()):
+        for event in self.events:
+            if event.is_whole_day() and event.is_at_day(day):
+                return True
+        return False
+
+    def is_day_event(self, day=datetime.today()):
+        for event in self.events:
+            if not event.is_whole_day() and event.is_at_day(day):
+                return True
+        return False
