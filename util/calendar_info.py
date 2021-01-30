@@ -8,16 +8,13 @@ def load_all_events(today=datetime.now()):
     year = today.year
     month = today.month
 
-    local_holidays = load_holidays(year, month)
-    local_events = load_events(year, month)
-    google_events = monthly_events(year, month)
-
-    print(local_holidays)
-    print(local_events)
-    print(google_events)
+    local_holidays = load_holidays(year=year, month=month)
+    local_events = load_events(year=year, month=month)
+    google_events = monthly_events(year=year, month=month)
+    google_holidays = []
 
     return CalendarInfo(month=month, year=year, local_holidays=local_holidays, local_events=local_events,
-                        google_holidays=[], google_events=google_events)
+                        google_holidays=google_holidays, google_events=google_events)
 
 
 def filter_events_for_day(events=None, day=datetime.today()):
@@ -38,7 +35,7 @@ def filter_events_for_time(events=None, now=datetime.now()):
 
     result = []
     for event in events:
-        if event.is_at_day_time(now):
+        if event.is_currently_or_upcoming(now):
             result.append(event)
 
     return result

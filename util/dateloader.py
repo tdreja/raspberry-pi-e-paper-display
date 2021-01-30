@@ -27,6 +27,7 @@ def parse_date(year, line, holiday=False):
 def load_dates_from_file(month, year, file, holiday=False):
     dates = []
     if not os.path.exists(file):
+        print('Could not find file '+file)
         return dates
 
     f = open(file, encoding="utf-8")

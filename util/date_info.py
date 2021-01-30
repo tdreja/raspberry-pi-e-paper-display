@@ -5,6 +5,18 @@ def check_day(year, month, day):
     return day.year == year and day.month == month
 
 
+def date_in_range(start, end, compare):
+    return start <= compare <= end
+
+
+def is_upcoming(start, end, compare):
+    return start >= compare and end >= compare
+
+
+def is_currently(start, end, compare):
+    return start <= compare <= end
+
+
 class DateInfo:
 
     def __init__(self, name="", start_date=date.today(), end_date=date.today(), start_date_time=datetime.today(),
@@ -62,15 +74,17 @@ class DateInfo:
         return check_day(year, month, self.start_day()) or check_day(year, month, self.end_day())
 
     def is_at_day(self, day=datetime.now().date()):
-        return self.start_day() == day or self.end_day() == day
+        return date_in_range(self.start_day(), self.end_day(), day)
 
-    def is_at_day_time(self, daytime=datetime.now()):
-        day_match = self.is_at_day(daytime.date())
+    def is_currently_or_upcoming(self, date_time=datetime.now()):
+        in_range = date_in_range(self.start_day(), self.end_day(), date_time.date())
+
         if self.is_whole_day():
-            return day_match
-        if not day_match:
-            return False
-        else:
+            return in_range
+        elif in_range:
             if self.start_date_time.tzinfo is not None:
-                daytime = daytime.astimezone()
-            return self.is_at_day(daytime.date()) and self.start_date_time > daytime and self.end_date_time > daytime
+                date_time = date_time.astimezone()
+            return is_upcoming(self.start_date_time, self.end_date_time, date_time) or is_currently(
+                self.start_date_time, self.end_date_time, date_time)
+        else:
+            return False
