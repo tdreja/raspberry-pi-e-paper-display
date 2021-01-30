@@ -29,37 +29,31 @@ from util.date_info import DateInfo
 
 SCOPES = ['https://www.googleapis.com/auth/calendar.readonly']
 
-
-def main():
-    for value in daily_events():
-        print(value[0].isoformat() + ' ' + value[1])
+main_file = './google_calendars.csv'
+holidays_file = './google_holidays.csv'
 
 
-def daily_events(now=datetime.datetime.now()):
-    if not os.path.exists('./credentials.json'):
-        print('No credentials for google. Aborting')
-        return []
-
-    start_time = now.replace(hour=0, minute=0, second=0)
-    end_time = start_time + datetime.timedelta(days=1)
-
-    utc_start = datetime.datetime.utcfromtimestamp(start_time.timestamp())
-    utc_end = datetime.datetime.utcfromtimestamp(end_time.timestamp())
-    return load_events(load_calendars(), min_time=utc_start, max_time=utc_end)
+def monthly_holidays(year=datetime.date.today().year, month=datetime.datetime.today().month):
+    return load_events_for_month(year=year, month=month, holidays=True, file=holidays_file)
 
 
-def monthly_events(year, month):
+def monthly_events(year=datetime.date.today().year, month=datetime.datetime.today().month):
+    return load_events_for_month(year=year, month=month, holidays=False, file=main_file)
+
+
+def load_events_for_month(year, month, holidays=False, file=''):
     if not os.path.exists('./credentials.json'):
         print('No credentials for google. Aborting')
         return []
 
     monthrange = calendar.monthrange(year, month)
-    start_time = datetime.datetime(year, month, monthrange[0], 0, 0)
+    print("Year "+str(year)+" Month "+str(month)+" Range: "+str(monthrange))
+    start_time = datetime.datetime(year, month, 1, 0, 0)
     end_time = datetime.datetime(year, month, monthrange[1], 0, 0)
 
     utc_start = datetime.datetime.utcfromtimestamp(start_time.timestamp())
     utc_end = datetime.datetime.utcfromtimestamp(end_time.timestamp())
-    return load_events(load_calendars(), min_time=utc_start, max_time=utc_end)
+    return load_events(load_calendars(file=file), holidays=holidays, min_time=utc_start, max_time=utc_end)
 
 
 def service():
@@ -85,8 +79,8 @@ def service():
     return build('calendar', 'v3', credentials=creds)
 
 
-def load_calendars():
-    names = find_calendar_names()
+def load_calendars(file=''):
+    names = find_calendar_names(file=file)
     calendar = []
 
     events_result = service().calendarList().list().execute()
@@ -102,19 +96,19 @@ def load_calendars():
     return calendar
 
 
-def find_calendar_names():
+def find_calendar_names(file=''):
     names = []
-    if not os.path.exists('./calendars.csv'):
+    if not os.path.exists(file):
         return names
 
-    f = open('./calendars.csv', encoding="utf-8")
+    f = open(file, encoding="utf-8")
     for line in f.readlines():
         names.append(line.strip())
     f.close()
     return names
 
 
-def load_events(calendars, min_time=datetime.datetime.utcnow(), max_time=datetime.datetime.utcnow()):
+def load_events(calendars, holidays=False, min_time=datetime.datetime.utcnow(), max_time=datetime.datetime.utcnow()):
     overview = []
     events = []
     if not calendars:
@@ -127,12 +121,12 @@ def load_events(calendars, min_time=datetime.datetime.utcnow(), max_time=datetim
         print('No events found from google')
         return overview
     for event in events:
-        overview.append(parse_event(event))
+        overview.append(parse_event(event, holidays=holidays))
 
     return overview
 
 
-def parse_event(event):
+def parse_event(event, holidays=False):
     start = event['start']
     end = event['end']
     name = event['summary']
@@ -143,12 +137,15 @@ def parse_event(event):
     if start_date_time_str is None:
         start_date = start.get('date')
         end_date = end.get('date')
+        parsed_end = datetime.date.fromisoformat(end_date) - datetime.timedelta(days=1)
         return DateInfo(name=name, start_date=datetime.date.fromisoformat(start_date),
-                        end_date=datetime.date.fromisoformat(end_date), start_date_time=None, end_date_time=None)
+                        end_date=parsed_end, start_date_time=None, end_date_time=None,
+                        holiday=holidays)
     else:
         return DateInfo(name=name, start_date=None, end_date=None,
                         start_date_time=datetime.datetime.fromisoformat(start_date_time_str),
-                        end_date_time=datetime.datetime.fromisoformat(end_date_time_str))
+                        end_date_time=datetime.datetime.fromisoformat(end_date_time_str),
+                        holiday=holidays)
 
 
 def events_for_calendar(calendar_id, min_time=datetime.datetime.utcnow(), max_time=datetime.datetime.utcnow()):
