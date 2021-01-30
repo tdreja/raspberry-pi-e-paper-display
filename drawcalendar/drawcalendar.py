@@ -27,7 +27,7 @@ def draw_calendar(draw, start_xy, image_width, today=date.today()):
     year = today.year
     text_calendar = calendar.TextCalendar(calendar.MONDAY)
     # Create a list of all holidays for this month
-    holidays = list(map(lambda entry: entry[0], load_holidays(month, year)))
+    holidays = list(map(lambda entry: entry.start_date, load_holidays(month, year)))
 
     xy = start_xy
     draw_header(draw, xy, image_width, text_calendar, text_calendar.formatmonthname(year, month, 20))

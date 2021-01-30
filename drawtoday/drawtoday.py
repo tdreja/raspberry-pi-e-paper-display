@@ -126,11 +126,11 @@ def draw_events(draw, content_xy, block_size, now=datetime.now()):
         next_xy = (content_xy[0], content_xy[1] + block_size[1])
 
     google_events = google_loader.daily_events(now)
-    if not google_events.get_info():
+    if not google_events:
         draw_local_events(draw, next_xy, block_size, now)
         return
 
-    text = 'Termine: ' + ', '.join(list(map(lambda entry: entry.display(), google_events.get_info())))
+    text = 'Termine: ' + ', '.join(list(map(lambda entry: entry.display(), google_events)))
     draw_text_centered(draw, next_xy, text, font=fonts.roboto16, color=fonts.color_black, size=block_size)
 
 

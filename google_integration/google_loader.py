@@ -24,7 +24,7 @@ from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 
 # If modifying these scopes, delete the file token.pickle.
-from util.date_overview import DateOverview, DateInfo
+from util.date_info import DateInfo
 
 SCOPES = ['https://www.googleapis.com/auth/calendar.readonly']
 
@@ -100,7 +100,7 @@ def find_calendar_names():
 
 
 def load_events(calendars, min_time=datetime.datetime.utcnow(), max_time=datetime.datetime.utcnow()):
-    overview = DateOverview()
+    overview = []
     events = []
     if not calendars:
         events.extend(events_for_calendar(calendar_id='primary', min_time=min_time, max_time=max_time))
@@ -112,7 +112,7 @@ def load_events(calendars, min_time=datetime.datetime.utcnow(), max_time=datetim
         print('No events found from google')
         return overview
     for event in events:
-        overview.add_info(parse_event(event))
+        overview.append(parse_event(event))
 
     return overview
 
