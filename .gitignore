@@ -207,5 +207,7 @@ credentials.json
 */credentials.json
 token.pickle
 */token.pickle
-calendars.csv
-*/calendars.csv
+google_calendars.csv
+*/google_calendars.csv
+google_holidays.csv
+*/google_holidays.csv
