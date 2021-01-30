@@ -1,8 +1,8 @@
 import calendar
-import os
 from datetime import datetime
 
 from font import fonts
+from util import drawtext
 from util.calendar_info import CalendarInfo
 from util.drawtext import draw_text_centered
 
@@ -107,20 +107,24 @@ def draw_time(draw, content_xy, block_size, now=datetime.now()):
     draw_text_centered(draw, next_xy, time, font=fonts.roboto22, color=fonts.color_black, size=block_size)
 
 
-def draw_events(draw, content_xy, block_size, now=datetime.now(), info=CalendarInfo()):
-    next_xy = content_xy
+def draw_events(draw, start_xy, end_xy, line_size, now=datetime.now(), info=CalendarInfo()):
+    lines = []
     holiday_texts = info.list_holidays(now.date())
-    if holiday_texts:
-        draw_text_centered(draw, next_xy, ', '.join(holiday_texts), font=fonts.roboto16,
-                           color=fonts.color_black, size=block_size)
-        next_xy = (content_xy[0], content_xy[1] + block_size[1])
-
     event_texts = info.list_events(now)
-    text = 'Heute gibt es keine Termine'
-    if event_texts:
-        text = 'Termine: ' + ', '.join(event_texts)
 
-    draw_text_centered(draw, next_xy, text, font=fonts.roboto16, color=fonts.color_black, size=block_size)
+    lines.extend(
+        drawtext.generate_drawable_lines(draw, font=fonts.roboto16, prefix='', joiner=', ', text_parts=holiday_texts,
+                                         width=line_size[0]))
+
+    if event_texts:
+        lines.extend(
+            drawtext.generate_drawable_lines(draw, font=fonts.roboto16, prefix='Termine: ', joiner=', ',
+                                             text_parts=event_texts, width=line_size[0]))
+    else:
+        lines.append('Heute gibt es keine Termine')
+
+    drawtext.draw_lines_centered(draw, font=fonts.roboto16, lines=lines, start_xy=start_xy, end_xy=end_xy,
+                                 color=fonts.color_black, line_size=line_size)
 
 
 def draw_today(draw, start_xy, image_width, now=datetime.now(), info=CalendarInfo()):
@@ -140,6 +144,7 @@ def draw_today(draw, start_xy, image_width, now=datetime.now(), info=CalendarInf
 
     draw_time(draw, content_xy=content_xy, block_size=block_size, now=now)
 
-    content_xy = (content_xy[0], content_xy[1] + 2 * block_size[1] + 2 * block_offset)
+    content_xy = (content_xy[0], content_xy[1] + 2 * block_size[1] + block_offset)
 
-    draw_events(draw, content_xy=content_xy, block_size=block_size, now=now, info=info)
+    draw_events(draw, start_xy=content_xy, end_xy=(content_xy[0], content_xy[1] + 3 * text_block_height),
+                line_size=block_size, now=now, info=info)

@@ -41,7 +41,7 @@ class DateInfo:
         if self.is_whole_day():
             return self.name
         else:
-            return self.name + '(' + self.start_date_time.time().isoformat(timespec='minutes') \
+            return self.name + ' (' + self.start_date_time.time().isoformat(timespec='minutes') \
                    + ' - ' + self.end_date_time.time().isoformat(timespec='minutes') + ')'
 
     def is_whole_day(self):
