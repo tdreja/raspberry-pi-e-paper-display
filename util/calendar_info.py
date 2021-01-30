@@ -63,7 +63,7 @@ class CalendarInfo:
     def append_event(self, event=None):
         if event is None:
             return
-        elif not event.is_in_range(self.year, self.month):
+        elif not event.is_in_year_and_month(self.year, self.month):
             return
         elif event.is_holiday():
             self.holidays.append(event)

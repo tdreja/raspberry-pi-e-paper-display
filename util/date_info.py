@@ -41,43 +41,32 @@ class DateInfo:
         if self.is_whole_day():
             return self.name
         else:
-            return self.name + '(' + self.start_time().isoformat() + ' - ' + self.end_time().isoformat() + ')'
+            return self.name + '(' + self.start_date_time.time().isoformat(timespec='minutes') \
+                   + ' - ' + self.end_date_time.time().isoformat(timespec='minutes') + ')'
 
     def is_whole_day(self):
         return self.start_date_time is None
 
-    def start_day(self):
+    def start_as_date(self):
         if self.start_date_time is None:
             return self.start_date
         else:
             return self.start_date_time.date()
 
-    def start_time(self):
-        if self.start_date_time is None:
-            return None
-        else:
-            return self.start_date_time.time()
-
-    def end_time(self):
-        if self.end_date_time is None:
-            return None
-        else:
-            return self.end_date_time.time()
-
-    def end_day(self):
+    def end_as_date(self):
         if self.end_date_time is None:
             return self.end_date
         else:
             return self.end_date_time.date()
 
-    def is_in_range(self, year, month):
-        return check_day(year, month, self.start_day()) or check_day(year, month, self.end_day())
+    def is_in_year_and_month(self, year, month):
+        return check_day(year, month, self.start_as_date()) or check_day(year, month, self.end_as_date())
 
     def is_at_day(self, day=datetime.now().date()):
-        return date_in_range(self.start_day(), self.end_day(), day)
+        return date_in_range(self.start_as_date(), self.end_as_date(), day)
 
     def is_currently_or_upcoming(self, date_time=datetime.now()):
-        in_range = date_in_range(self.start_day(), self.end_day(), date_time.date())
+        in_range = date_in_range(self.start_as_date(), self.end_as_date(), date_time.date())
 
         if self.is_whole_day():
             return in_range
