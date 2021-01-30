@@ -24,6 +24,8 @@ from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 
 # If modifying these scopes, delete the file token.pickle.
+from util.date_overview import DateOverview, DateInfo
+
 SCOPES = ['https://www.googleapis.com/auth/calendar.readonly']
 
 
@@ -98,7 +100,7 @@ def find_calendar_names():
 
 
 def load_events(calendars, min_time=datetime.datetime.utcnow(), max_time=datetime.datetime.utcnow()):
-    results = []
+    overview = DateOverview()
     events = []
     if not calendars:
         events.extend(events_for_calendar(calendar_id='primary', min_time=min_time, max_time=max_time))
@@ -108,22 +110,38 @@ def load_events(calendars, min_time=datetime.datetime.utcnow(), max_time=datetim
 
     if not events:
         print('No events found from google')
-        return results
+        return overview
     for event in events:
-        start = event['start'].get('dateTime', event['start'].get('date'))
-        start_time = datetime.datetime.fromisoformat(start)
-        print('Event '+event['summary'])
-        results.append((start_time, event['summary']))
+        overview.add_info(parse_event(event))
 
-    return results
+    return overview
+
+
+def parse_event(event):
+    start = event['start']
+    end = event['end']
+    name = event['summary']
+
+    start_date_time_str = start.get('dateTime')
+    end_date_time_str = end.get('dateTime')
+
+    if start_date_time_str is None:
+        start_date = start.get('date')
+        end_date = end.get('date')
+        return DateInfo(name=name, start_date=datetime.date.fromisoformat(start_date),
+                        end_date=datetime.date.fromisoformat(end_date), start_date_time=None, end_date_time=None)
+    else:
+        return DateInfo(name=name, start_date=None, end_date=None,
+                        start_date_time=datetime.datetime.fromisoformat(start_date_time_str),
+                        end_date_time=datetime.datetime.fromisoformat(end_date_time_str))
 
 
 def events_for_calendar(calendar_id, min_time=datetime.datetime.utcnow(), max_time=datetime.datetime.utcnow()):
-    print('Loading calendar '+calendar_id)
+    print('Loading calendar ' + calendar_id)
     events_result = service().events().list(calendarId=calendar_id,
                                             timeMin=min_time.isoformat() + 'Z',
                                             timeMax=max_time.isoformat() + 'Z',
-                                            maxResults=5, singleEvents=True,
+                                            maxResults=20, singleEvents=True,
                                             orderBy='startTime').execute()
     return events_result.get('items', [])
 
