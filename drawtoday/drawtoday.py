@@ -1,11 +1,10 @@
 import calendar
-import os
 from datetime import datetime
 
 from font import fonts
-from util.dateloader import load_event_names, load_holiday_names
+from util import drawtext
+from util.calendar_info import CalendarInfo
 from util.drawtext import draw_text_centered
-from google_integration import google_loader
 
 headline_height = 48
 text_block_height = 28
@@ -108,33 +107,27 @@ def draw_time(draw, content_xy, block_size, now=datetime.now()):
     draw_text_centered(draw, next_xy, time, font=fonts.roboto22, color=fonts.color_black, size=block_size)
 
 
-def draw_local_events(draw, content_xy, block_size, now=datetime.now()):
-    event_texts = load_event_names(now.date())
-    text = 'Heute gibt es keine Termine'
+def draw_events(draw, start_xy, end_xy, line_size, now=datetime.now(), info=CalendarInfo()):
+    lines = []
+    holiday_texts = info.list_holidays(now.date())
+    event_texts = info.list_events(now)
+
+    lines.extend(
+        drawtext.generate_drawable_lines(draw, font=fonts.roboto16, prefix='', joiner=', ', text_parts=holiday_texts,
+                                         width=line_size[0]))
+
     if event_texts:
-        text = 'Termine: ' + ', '.join(event_texts)
+        lines.extend(
+            drawtext.generate_drawable_lines(draw, font=fonts.roboto16, prefix='Termine: ', joiner=', ',
+                                             text_parts=event_texts, width=line_size[0]))
+    else:
+        lines.append('Heute gibt es keine Termine')
 
-    draw_text_centered(draw, content_xy, text, font=fonts.roboto16, color=fonts.color_black, size=block_size)
-
-
-def draw_events(draw, content_xy, block_size, now=datetime.now()):
-    next_xy = content_xy
-    holiday_texts = load_holiday_names(now.date())
-    if holiday_texts:
-        draw_text_centered(draw, next_xy, ', '.join(holiday_texts), font=fonts.roboto16,
-                           color=fonts.color_black, size=block_size)
-        next_xy = (content_xy[0], content_xy[1] + block_size[1])
-
-    google_events = google_loader.daily_events(now)
-    if not google_events:
-        draw_local_events(draw, next_xy, block_size, now)
-        return
-
-    text = 'Termine: ' + ', '.join(list(map(lambda entry: entry[1], google_events)))
-    draw_text_centered(draw, next_xy, text, font=fonts.roboto16, color=fonts.color_black, size=block_size)
+    drawtext.draw_lines_centered(draw, font=fonts.roboto16, lines=lines, start_xy=start_xy, end_xy=end_xy,
+                                 color=fonts.color_black, line_size=line_size)
 
 
-def draw_today(draw, start_xy, image_width, now=datetime.now()):
+def draw_today(draw, start_xy, image_width, now=datetime.now(), info=CalendarInfo()):
     draw.rectangle((start_xy[0], start_xy[1],
                     start_xy[0] + image_width + 1, start_xy[1] + headline_height + 1),
                    fill=fonts.color_black, outline=None, width=0)
@@ -151,6 +144,7 @@ def draw_today(draw, start_xy, image_width, now=datetime.now()):
 
     draw_time(draw, content_xy=content_xy, block_size=block_size, now=now)
 
-    content_xy = (content_xy[0], content_xy[1] + 2 * block_size[1] + 2 * block_offset)
+    content_xy = (content_xy[0], content_xy[1] + 2 * block_size[1] + block_offset)
 
-    draw_events(draw, content_xy=content_xy, block_size=block_size, now=now)
+    draw_events(draw, start_xy=content_xy, end_xy=(content_xy[0], content_xy[1] + 3 * text_block_height),
+                line_size=block_size, now=now, info=info)

@@ -15,6 +15,7 @@
 # [START calendar_quickstart]
 from __future__ import print_function
 
+import calendar
 import datetime
 import os.path
 import pickle
@@ -24,25 +25,36 @@ from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 
 # If modifying these scopes, delete the file token.pickle.
+from util.date_info import DateInfo
+
 SCOPES = ['https://www.googleapis.com/auth/calendar.readonly']
 
+credentials = './credentials.json'
+token_pickle = 'token.pickle'
+main_file = './google_calendars.csv'
+holidays_file = './google_holidays.csv'
 
-def main():
-    for value in daily_events():
-        print(value[0].isoformat() + ' ' + value[1])
+
+def monthly_holidays(year=datetime.date.today().year, month=datetime.datetime.today().month):
+    return load_events_for_month(year=year, month=month, holidays=True, file=holidays_file)
 
 
-def daily_events(now=datetime.datetime.now()):
-    if not os.path.exists('./credentials.json'):
+def monthly_events(year=datetime.date.today().year, month=datetime.datetime.today().month):
+    return load_events_for_month(year=year, month=month, holidays=False, file=main_file)
+
+
+def load_events_for_month(year, month, holidays=False, file=''):
+    if not os.path.exists(credentials):
         print('No credentials for google. Aborting')
         return []
 
-    start_time = now.replace(hour=0, minute=0, second=0)
-    end_time = start_time + datetime.timedelta(days=1)
+    monthrange = calendar.monthrange(year, month)
+    start_time = datetime.datetime(year, month, 1, 0, 0)
+    end_time = datetime.datetime(year, month, monthrange[1], 0, 0)
 
     utc_start = datetime.datetime.utcfromtimestamp(start_time.timestamp())
     utc_end = datetime.datetime.utcfromtimestamp(end_time.timestamp())
-    return load_events(load_calendars(), min_time=utc_start, max_time=utc_end)
+    return load_events(load_calendars(file=file), holidays=holidays, min_time=utc_start, max_time=utc_end)
 
 
 def service():
@@ -50,8 +62,8 @@ def service():
     # The file token.pickle stores the user's access and refresh tokens, and is
     # created automatically when the authorization flow completes for the first
     # time.
-    if os.path.exists('token.pickle'):
-        with open('token.pickle', 'rb') as token:
+    if os.path.exists(token_pickle):
+        with open(token_pickle, 'rb') as token:
             creds = pickle.load(token)
     # If there are no (valid) credentials available, let the user log in.
     if not creds or not creds.valid:
@@ -59,17 +71,17 @@ def service():
             creds.refresh(Request())
         else:
             flow = InstalledAppFlow.from_client_secrets_file(
-                './credentials.json', SCOPES)
+                credentials, SCOPES)
             creds = flow.run_local_server(port=0)
         # Save the credentials for the next run
-        with open('token.pickle', 'wb') as token:
+        with open(token_pickle, 'wb') as token:
             pickle.dump(creds, token)
 
     return build('calendar', 'v3', credentials=creds)
 
 
-def load_calendars():
-    names = find_calendar_names()
+def load_calendars(file=''):
+    names = find_calendar_names(file=file)
     calendar = []
 
     events_result = service().calendarList().list().execute()
@@ -85,20 +97,20 @@ def load_calendars():
     return calendar
 
 
-def find_calendar_names():
+def find_calendar_names(file=''):
     names = []
-    if not os.path.exists('./calendars.csv'):
+    if not os.path.exists(file):
         return names
 
-    f = open('./calendars.csv', encoding="utf-8")
+    f = open(file, encoding="utf-8")
     for line in f.readlines():
         names.append(line.strip())
     f.close()
     return names
 
 
-def load_events(calendars, min_time=datetime.datetime.utcnow(), max_time=datetime.datetime.utcnow()):
-    results = []
+def load_events(calendars, holidays=False, min_time=datetime.datetime.utcnow(), max_time=datetime.datetime.utcnow()):
+    overview = []
     events = []
     if not calendars:
         events.extend(events_for_calendar(calendar_id='primary', min_time=min_time, max_time=max_time))
@@ -108,26 +120,42 @@ def load_events(calendars, min_time=datetime.datetime.utcnow(), max_time=datetim
 
     if not events:
         print('No events found from google')
-        return results
+        return overview
     for event in events:
-        start = event['start'].get('dateTime', event['start'].get('date'))
-        start_time = datetime.datetime.fromisoformat(start)
-        print('Event '+event['summary'])
-        results.append((start_time, event['summary']))
+        overview.append(parse_event(event, holidays=holidays))
 
-    return results
+    return overview
+
+
+def parse_event(event, holidays=False):
+    start = event['start']
+    end = event['end']
+    name = event['summary']
+
+    start_date_time_str = start.get('dateTime')
+    end_date_time_str = end.get('dateTime')
+
+    if start_date_time_str is None:
+        start_date = start.get('date')
+        end_date = end.get('date')
+        parsed_end = datetime.date.fromisoformat(end_date) - datetime.timedelta(days=1)
+        return DateInfo(name=name, start_date=datetime.date.fromisoformat(start_date),
+                        end_date=parsed_end, start_date_time=None, end_date_time=None,
+                        holiday=holidays)
+    else:
+        return DateInfo(name=name, start_date=None, end_date=None,
+                        start_date_time=datetime.datetime.fromisoformat(start_date_time_str),
+                        end_date_time=datetime.datetime.fromisoformat(end_date_time_str),
+                        holiday=holidays)
 
 
 def events_for_calendar(calendar_id, min_time=datetime.datetime.utcnow(), max_time=datetime.datetime.utcnow()):
-    print('Loading calendar '+calendar_id)
+    print('Loading google calendar "' + calendar_id+'"')
     events_result = service().events().list(calendarId=calendar_id,
                                             timeMin=min_time.isoformat() + 'Z',
                                             timeMax=max_time.isoformat() + 'Z',
-                                            maxResults=5, singleEvents=True,
+                                            maxResults=20, singleEvents=True,
                                             orderBy='startTime').execute()
     return events_result.get('items', [])
 
-
-if __name__ == '__main__':
-    main()
 # [END calendar_quickstart]
