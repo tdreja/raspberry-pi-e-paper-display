@@ -9,6 +9,7 @@ from PIL import Image, ImageDraw
 
 from drawcalendar.drawcalendar import draw_calendar
 from drawtoday.drawtoday import draw_today, full_height
+from util.calendar_info import load_all_events
 from waveshare_epd import epd7in5
 
 
@@ -27,8 +28,9 @@ try:
     image = Image.new('1', (epd.height, epd.width), 255)  # 255: clear the frame
     draw = ImageDraw.Draw(image)
     today = datetime.now()
-    draw_today(draw, (0, 0), epd.height, today)
-    draw_calendar(draw, (0, full_height), epd.height, today.date())
+    calendar_info = load_all_events(today)
+    draw_today(draw, (0, 0), epd.height, today, calendar_info)
+    draw_calendar(draw, (0, full_height), epd.height, today.date(), calendar_info)
     epd.display(epd.getbuffer(image.rotate(angle=90, expand=1)))
     time.sleep(2)
     epd.sleep()

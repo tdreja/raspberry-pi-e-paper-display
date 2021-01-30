@@ -15,6 +15,7 @@
 # [START calendar_quickstart]
 from __future__ import print_function
 
+import calendar
 import datetime
 import os.path
 import pickle
@@ -41,6 +42,20 @@ def daily_events(now=datetime.datetime.now()):
 
     start_time = now.replace(hour=0, minute=0, second=0)
     end_time = start_time + datetime.timedelta(days=1)
+
+    utc_start = datetime.datetime.utcfromtimestamp(start_time.timestamp())
+    utc_end = datetime.datetime.utcfromtimestamp(end_time.timestamp())
+    return load_events(load_calendars(), min_time=utc_start, max_time=utc_end)
+
+
+def monthly_events(year, month):
+    if not os.path.exists('./credentials.json'):
+        print('No credentials for google. Aborting')
+        return []
+
+    monthrange = calendar.monthrange(year, month)
+    start_time = datetime.datetime(year, month, monthrange[0], 0, 0)
+    end_time = datetime.datetime(year, month, monthrange[1], 0, 0)
 
     utc_start = datetime.datetime.utcfromtimestamp(start_time.timestamp())
     utc_end = datetime.datetime.utcfromtimestamp(end_time.timestamp())

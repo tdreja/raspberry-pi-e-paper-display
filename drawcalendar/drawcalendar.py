@@ -2,6 +2,7 @@ import calendar
 from datetime import date
 
 from font import fonts
+from util.calendar_info import CalendarInfo
 from util.dateloader import load_holidays
 from util.drawtext import draw_text_centered
 
@@ -14,20 +15,21 @@ row_small = 32
 row_full = 48
 
 
-def draw_calendar(draw, start_xy, image_width, today=date.today()):
+def draw_calendar(draw, start_xy, image_width, today=date.today(), info=CalendarInfo()):
     """
     Draws the entire drawcalendar2 below the coordinates
+    :param info:
     :param draw: Image Draw
     :param start_xy: Coordinates
     :param image_width: Width of the image
     :param today: the current date
     :return: nothing
     """
-    month = today.month
-    year = today.year
+    month = info.month
+    year = info.year
     text_calendar = calendar.TextCalendar(calendar.MONDAY)
     # Create a list of all holidays for this month
-    holidays = list(map(lambda entry: entry.start_date, load_holidays(month, year)))
+    holidays = list(map(lambda entry: entry.start_date, info.holidays))
 
     xy = start_xy
     draw_header(draw, xy, image_width, text_calendar, text_calendar.formatmonthname(year, month, 20))

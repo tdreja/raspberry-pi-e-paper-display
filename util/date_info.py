@@ -1,6 +1,10 @@
 from datetime import date, datetime
 
 
+def check_day(year, month, day):
+    return day.year == year and day.month == month
+
+
 class DateInfo:
 
     def __init__(self, name="", start_date=date.today(), end_date=date.today(), start_date_time=datetime.today(),
@@ -14,6 +18,12 @@ class DateInfo:
 
     def is_holiday(self):
         return self.holiday
+
+    def __repr__(self):
+        if self.is_whole_day():
+            return self.name + '(' + self.start_date.isoformat() + ' - ' + self.end_date.isoformat() + ')'
+        else:
+            return self.name + '(' + self.start_date_time.isoformat() + ' - ' + self.start_date_time.isoformat() + ')'
 
     def display(self):
         if self.is_whole_day():
@@ -47,3 +57,20 @@ class DateInfo:
             return self.end_date
         else:
             return self.end_date_time.date()
+
+    def is_in_range(self, year, month):
+        return check_day(year, month, self.start_day()) or check_day(year, month, self.end_day())
+
+    def is_at_day(self, day=datetime.now().date()):
+        return self.start_day() == day or self.end_day() == day
+
+    def is_at_day_time(self, daytime=datetime.now()):
+        day_match = self.is_at_day(daytime.date())
+        if self.is_whole_day():
+            return day_match
+        if not day_match:
+            return False
+        else:
+            if self.start_date_time.tzinfo is not None:
+                daytime = daytime.astimezone()
+            return self.is_at_day(daytime.date()) and self.start_date_time > daytime and self.end_date_time > daytime

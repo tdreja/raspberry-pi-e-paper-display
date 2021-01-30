@@ -12,16 +12,6 @@ def load_holidays(month, year):
     return load_dates_from_file(month, year, './holidays_' + str(year) + '.csv', True)
 
 
-def load_event_names(today=date.today()):
-    events = filter(lambda event_tuple: event_tuple[0] == today, load_events(today.month, today.year))
-    return list(map(lambda event_tuple: event_tuple[1], events))
-
-
-def load_holiday_names(today=date.today()):
-    holidays = filter(lambda event: event.start_date == today, load_holidays(today.month, today.year))
-    return list(map(lambda event: event.display(), holidays))
-
-
 def parse_date(year, line, holiday=False):
     split = line.split(":", 1)
     parsed = date.fromisoformat(split[0])
