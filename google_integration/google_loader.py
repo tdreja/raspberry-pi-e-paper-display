@@ -29,6 +29,8 @@ from util.date_info import DateInfo
 
 SCOPES = ['https://www.googleapis.com/auth/calendar.readonly']
 
+credentials = './credentials.json'
+token_pickle = 'token.pickle'
 main_file = './google_calendars.csv'
 holidays_file = './google_holidays.csv'
 
@@ -42,12 +44,11 @@ def monthly_events(year=datetime.date.today().year, month=datetime.datetime.toda
 
 
 def load_events_for_month(year, month, holidays=False, file=''):
-    if not os.path.exists('./credentials.json'):
+    if not os.path.exists(credentials):
         print('No credentials for google. Aborting')
         return []
 
     monthrange = calendar.monthrange(year, month)
-    print("Year "+str(year)+" Month "+str(month)+" Range: "+str(monthrange))
     start_time = datetime.datetime(year, month, 1, 0, 0)
     end_time = datetime.datetime(year, month, monthrange[1], 0, 0)
 
@@ -61,8 +62,8 @@ def service():
     # The file token.pickle stores the user's access and refresh tokens, and is
     # created automatically when the authorization flow completes for the first
     # time.
-    if os.path.exists('token.pickle'):
-        with open('token.pickle', 'rb') as token:
+    if os.path.exists(token_pickle):
+        with open(token_pickle, 'rb') as token:
             creds = pickle.load(token)
     # If there are no (valid) credentials available, let the user log in.
     if not creds or not creds.valid:
@@ -70,10 +71,10 @@ def service():
             creds.refresh(Request())
         else:
             flow = InstalledAppFlow.from_client_secrets_file(
-                './credentials.json', SCOPES)
+                credentials, SCOPES)
             creds = flow.run_local_server(port=0)
         # Save the credentials for the next run
-        with open('token.pickle', 'wb') as token:
+        with open(token_pickle, 'wb') as token:
             pickle.dump(creds, token)
 
     return build('calendar', 'v3', credentials=creds)
@@ -149,7 +150,7 @@ def parse_event(event, holidays=False):
 
 
 def events_for_calendar(calendar_id, min_time=datetime.datetime.utcnow(), max_time=datetime.datetime.utcnow()):
-    print('Loading calendar ' + calendar_id)
+    print('Loading google calendar "' + calendar_id+'"')
     events_result = service().events().list(calendarId=calendar_id,
                                             timeMin=min_time.isoformat() + 'Z',
                                             timeMax=max_time.isoformat() + 'Z',
@@ -157,7 +158,4 @@ def events_for_calendar(calendar_id, min_time=datetime.datetime.utcnow(), max_ti
                                             orderBy='startTime').execute()
     return events_result.get('items', [])
 
-
-if __name__ == '__main__':
-    main()
 # [END calendar_quickstart]

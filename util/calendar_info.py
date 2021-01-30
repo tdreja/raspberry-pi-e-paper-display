@@ -12,7 +12,6 @@ def load_all_events(today=datetime.today()):
     local_events = load_events(year=year, month=month)
     google_events = monthly_events(year=year, month=month)
     google_holidays = monthly_holidays(year=year, month=month)
-    print(google_holidays)
 
     return CalendarInfo(month=month, year=year, local_holidays=local_holidays, local_events=local_events,
                         google_holidays=google_holidays, google_events=google_events)
